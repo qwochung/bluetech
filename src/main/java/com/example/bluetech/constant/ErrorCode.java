@@ -4,10 +4,14 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+//     General
+
     BAD_REQUEST (400, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase()),
     NOT_FOUND (404, HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase()),
 
 
+
+//    Auth
     USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase()),
     EMAIL_EXISTED (400, HttpStatus.BAD_REQUEST, "Email already exists"),
     USERNAME_EXISTED (400, HttpStatus.BAD_REQUEST, "Username already exists"),
@@ -17,6 +21,16 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND (404, HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase()),
     PERMISSION_ALREADY_EXISTS (400, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase()),
     ROLE_ALREADY_EXISTS (400, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase()),
+
+
+
+//    File
+    FILE_SIZE_EXCEEDED (500, HttpStatus.INTERNAL_SERVER_ERROR, "File exceeded"),
+    FILE_EXTENSION_NOT_SUPPORTED (500, HttpStatus.INTERNAL_SERVER_ERROR, "File extension not supported"),
+
+
+
+
     ;
 
 

@@ -4,12 +4,7 @@ package com.example.bluetech.controller;
 import com.example.bluetech.dto.Response;
 import com.example.bluetech.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -18,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/s3")
-public class UploadController {
+public class S3Controller {
 
     @Autowired
     private S3Service s3Service;
@@ -29,7 +24,7 @@ public class UploadController {
         List<String> fileUrls = new ArrayList<>();
         try{
             for (MultipartFile file : files) {
-                String url = s3Service.uploadFile(file);
+                String url = s3Service.uploadFile(file, null);
                 fileUrls.add(url);
             }
         }catch (Exception e){
@@ -37,6 +32,12 @@ public class UploadController {
         }
 
         return Response.builder(fileUrls).build();
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    public Response delete(@RequestBody() String key) {
+
+        return Response.builder(s3Service.deleteFile(key)).build();
     }
 
 }
