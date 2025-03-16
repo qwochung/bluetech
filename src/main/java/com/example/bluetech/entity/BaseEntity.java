@@ -11,8 +11,12 @@ public class BaseEntity {
 
     @Id
     private String id;
-    private Long createdDate;
-    private Long deletedDate;
+    private Long createdAt;
+    private Long deletedAt;
+    private String createdBy;
+    private String deletedBy;
+    private String updatedBy;
+    private String updatedAt;
     @Setter
     private Status status;
 
