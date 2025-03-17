@@ -92,8 +92,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Optional<Image> findById(String id) {
-        return imageRepository.findById(id);
+    public Optional<Image> findActiveIamgeById(String id) {
+        return imageRepository.findActiveImageById(id);
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface ImageService {
     Image save(Image image);
     Image add(MultipartFile file);
     List<Image> add(MultipartFile[] files );
-    Optional<Image> findById(String id);
+    Optional<Image> findActiveIamgeById(String id);
     List<Image> findAll();
     Image update(Image image);
     void deleteById(String id);
