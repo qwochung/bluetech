@@ -2,7 +2,7 @@ package com.example.bluetech.controller;
 
 
 import com.example.bluetech.dto.Response;
-import com.example.bluetech.service.S3Service;
+import com.example.bluetech.service.ThirdParty.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
