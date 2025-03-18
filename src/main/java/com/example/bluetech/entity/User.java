@@ -28,5 +28,16 @@ public class User extends BaseEntity {
      @Transient
      Integer noOfFollowing;
 
-    
+
+     public void update(User user) {
+          if (user.getDateOfBirth() != null) {
+               this.dateOfBirth = user.getDateOfBirth();
+          }
+          if (user.getGender() != null) {
+               this.gender = user.getGender();
+          }
+          if (user.getPhone() != null) {
+               this.phone = user.getPhone();
+          }
+     }
 }

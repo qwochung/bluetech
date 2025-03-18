@@ -1,6 +1,7 @@
 package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
+import com.example.bluetech.constant.Status;
 import com.example.bluetech.entity.Address;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
@@ -73,13 +74,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return Optional.empty();
+    public Optional<User> findById(String id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public Optional<User> findByUserName(String username) {
+        return userRepository.findByUserName(username);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.empty();
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -94,22 +100,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(String id, User user) {
-        return null;
+        User userToUpdate = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        userToUpdate.update(user);
+        return userRepository.save(userToUpdate);
     }
 
     @Override
     public void deActivate(String id) {
-
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        user.setStatus(Status.INACTIVE);
+        userRepository.save(user);
     }
 
     @Override
     public void activate(String id) {
-
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        user.setStatus(Status.ACTIVE);
+        userRepository.save(user);
     }
 
     @Override
     public List<User> findAll() {
-        return List.of();
+        return userRepository.findAll();
     }
 
 
