@@ -13,7 +13,8 @@ public interface UserService {
     User save(User user);
     User add(User user, HttpServletRequest request) throws JsonProcessingException;
     User add(User user);
-    Optional<User> findByUsername(String username);
+    Optional<User> findById(String  id);
+    Optional<User> findByUserName(String userName);
     Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
     boolean existsByUserName(String userName);
