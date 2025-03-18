@@ -1,4 +1,4 @@
-package com.example.bluetech.service;
+package com.example.bluetech.service.ThirdParty;
 
 
 import com.example.bluetech.constant.ErrorCode;
@@ -10,11 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 @Service

@@ -6,16 +6,17 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Document("user")
 public class User extends BaseEntity {
-     String username;
+     String userName;
      String password;
      String email;   
      String phone;
-     LocalDateTime dateOfBirth;
+     LocalDate dateOfBirth;
      String gender;
      String avatarUrl;
 
