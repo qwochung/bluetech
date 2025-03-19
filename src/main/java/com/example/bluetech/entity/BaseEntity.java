@@ -13,7 +13,7 @@ public class BaseEntity {
     private String id;
     private Long createdAt = System.currentTimeMillis();
     private Long deletedAt;
-    private String updatedAt;
+    private Long updatedAt;
     @Setter
     private Status status = Status.ACTIVE;
 
