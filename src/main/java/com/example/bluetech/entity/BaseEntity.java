@@ -11,14 +11,11 @@ public class BaseEntity {
 
     @Id
     private String id;
-    private Long createdAt;
+    private Long createdAt = System.currentTimeMillis();
     private Long deletedAt;
-    private String createdBy;
-    private String deletedBy;
-    private String updatedBy;
-    private String updatedAt;
+    private Long updatedAt;
     @Setter
-    private Status status;
+    private Status status = Status.ACTIVE;
 
 
 }

@@ -6,7 +6,7 @@ import com.example.bluetech.entity.Image;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.ImageRepository;
 import com.example.bluetech.service.ImageService;
-import com.example.bluetech.service.S3Service;
+import com.example.bluetech.service.ThirdParty.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,8 +92,8 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Optional<Image> findById(String id) {
-        return imageRepository.findById(id);
+    public Optional<Image> findActiveIamgeById(String id) {
+        return imageRepository.findActiveImageById(id);
     }
 
     @Override

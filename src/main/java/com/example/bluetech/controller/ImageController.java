@@ -38,7 +38,7 @@ public class ImageController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Response findById(@PathVariable String id) {
-        Image image = imageService.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Image image = imageService.findActiveIamgeById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         return Response.builder(image).build();
     }
 
