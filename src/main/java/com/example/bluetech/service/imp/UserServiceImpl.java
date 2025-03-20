@@ -3,10 +3,12 @@ package com.example.bluetech.service.imp;
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.Status;
 import com.example.bluetech.entity.Address;
+import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.UserRepository;
 import com.example.bluetech.service.AddressService;
+import com.example.bluetech.service.InviteService;
 import com.example.bluetech.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private AddressService addressService;
+
+    @Autowired
+    private InviteService inviteService;
 
     @Override
     public User save(User user) {
@@ -44,7 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (user.getAddress() == null) {
-            String ip = getClientId(request);
+            String ip = getClientIp(request);
             Address address = addressService.addAddressByIp(ip);
             user.setAddress(address);
         }
@@ -127,7 +132,66 @@ public class UserServiceImpl implements UserService {
 
 
 
-    private String getClientId(HttpServletRequest request) {
+
+//    Invite Action
+    @Override
+    public Invite sendInvite(String userId, Invite invite) {
+        if (!userId.equals(invite.getInviter().getId())) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+        User inviter = userRepository.findById(invite.getInviter().getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        User invitee = userRepository.findById(invite.getInvitee().getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
+        Invite i = inviteService.add(invite);
+        return i;
+    }
+
+    @Override
+    public Invite revokeInvite(String userId, String invite) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Invite inv = inviteService.findById(invite).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        if (!userId.equals(inv.getInviter().getId())) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        inv = inviteService.revokeInvite(inv);
+        return inv;
+    }
+
+    @Override
+    public Invite acceptInvite(String userId, String invite) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Invite inv = inviteService.findById(invite).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        if (!userId.equals(inv.getInvitee().getId())) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        inv = inviteService.acceptInvite(inv);
+        return inv;
+    }
+
+
+      @Override
+    public Invite declineInvite(String userId, String invite) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Invite inv = inviteService.findById(invite).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        if (!userId.equals(inv.getInvitee().getId())) {
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        inv = inviteService.declineInvite(inv);
+        return inv;
+    }
+
+    @Override
+    public List<Invite> getPendingInvite(String userId) {
+        User invitee = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        List<Invite> invites = inviteService.findByInvitee(invitee);
+        return invites;
+    }
+
+
+    private String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
         if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
