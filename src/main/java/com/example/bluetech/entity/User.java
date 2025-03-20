@@ -1,6 +1,7 @@
 package com.example.bluetech.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Document("user")
 public class User extends BaseEntity {
      String userName;
+     @JsonIgnore
      String password;
      String email;   
      String phone;
@@ -21,6 +23,7 @@ public class User extends BaseEntity {
      String avatarUrl;
 
      @DBRef
+     @JsonIgnore
      Address address;
 
      @Transient
