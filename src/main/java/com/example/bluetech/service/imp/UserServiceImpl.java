@@ -3,17 +3,21 @@ package com.example.bluetech.service.imp;
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.Status;
 import com.example.bluetech.entity.Address;
+import com.example.bluetech.entity.Image;
 import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.repository.ImageRepository;
 import com.example.bluetech.repository.UserRepository;
 import com.example.bluetech.service.AddressService;
+import com.example.bluetech.service.ImageService;
 import com.example.bluetech.service.InviteService;
 import com.example.bluetech.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private InviteService inviteService;
+
+    @Autowired
+    private ImageService imageService;
 
     @Override
     public User save(User user) {
@@ -107,6 +114,14 @@ public class UserServiceImpl implements UserService {
     public User update(String id, User user) {
         User userToUpdate = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         userToUpdate.update(user);
+        return userRepository.save(userToUpdate);
+    }
+
+    @Override
+    public User updateAvatar(String id, MultipartFile file){
+        User userToUpdate = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        Image imageToUpdate = imageService.add(file);
+        userToUpdate.setAvatarUrl(imageToUpdate.getUrl());
         return userRepository.save(userToUpdate);
     }
 
