@@ -92,12 +92,17 @@ public class UserController {
         return Response.builder(users).build();
     }
 
+    @RequestMapping(value="/{id}/upload/avatar", method = RequestMethod.POST)
+    public Response uploadAvatar(@PathVariable("id") String id, @RequestBody String avatarUrl)  {
+//        User user = userService.uploadAvatar(id, avatarUrl);
+        return null;
+    }
+
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
     public Response inviteUser(@PathVariable("id") String id, @RequestBody Invite invite)  {
         Invite inv = userService.sendInvite(id, invite);
         return Response.builder(inv).build();
     }
-
 
     @RequestMapping(value = "/{userId}/invite/{inviteId}/revoke", method = RequestMethod.POST)
     public Response revokeInvite(@PathVariable("userId") String userId, @PathVariable("inviteId") String inviteId)  {
