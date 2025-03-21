@@ -1,11 +1,10 @@
 package com.example.bluetech.dto;
 
+
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-
 @Data
-
 public class Response {
 
     private Integer code;
@@ -59,15 +58,7 @@ public class Response {
             else {
                 response.setData(null);
             }
-
             return response;
         }
-
-
-
-
-
     }
-
-
 }
