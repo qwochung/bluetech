@@ -60,8 +60,7 @@ public class UserServiceImpl implements UserService {
             Address address = addressService.addAddressByIp(ip);
             user.setAddress(address);
         }
-
-        Address address= addressService.save(user.getAddress());
+        Address address = addressService.add(user.getAddress());
         user = userRepository.save(user);
 
         return user;
