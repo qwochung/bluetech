@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("address")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Address extends BaseEntity {
-        String country;
+    String country;
     String province;
     String district;
     String commune;
@@ -30,5 +30,22 @@ public class Address extends BaseEntity {
         address.setLongitude(response.getLatLong()[1]);
 
         return address;
+    }
+    public void update(Address address){
+        if(address.getCountry() != null){
+            this.country = address.getCountry();
+        }
+        if(address.getProvince() != null){
+            this.province = address.getProvince();
+        }
+        if(address.getDistrict() != null){
+            this.district = address.getDistrict();
+        }
+        if(address.getCommune() != null){
+            this.commune = address.getCommune();
+        }
+        if(address.getDetail() != null){
+            this.detail = address.getDetail();
+        }
     }
 }
