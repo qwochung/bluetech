@@ -31,9 +31,18 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address add(Address address) {
+        if(address.getProvince() == null || address.getDistrict() == null ||
+            address.getProvince().isEmpty() || address.getDistrict().isEmpty())
+            throw new AppException(ErrorCode.BAD_REQUEST);
 
-        //TODO: Handle logic here
         return addressRepository.save(address);
+    }
+
+    @Override
+    public Address update(String id, Address address){
+        Address addressToUpdate = addressRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        addressToUpdate.update(address);
+        return addressRepository.save(addressToUpdate);
     }
 
     @Override

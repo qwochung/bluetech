@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface AddressService {
     Address save(Address address);
     Address add(Address address);
+    Address update(String id, Address address);
     Address addAddressByIp(String ip) throws JsonProcessingException;
     Optional<Address> findById(String id);
     List<Address> findAll();

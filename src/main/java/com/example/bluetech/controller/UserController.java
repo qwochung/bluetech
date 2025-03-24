@@ -10,10 +10,12 @@ import com.example.bluetech.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -93,9 +95,9 @@ public class UserController {
     }
 
     @RequestMapping(value="/{id}/upload/avatar", method = RequestMethod.POST)
-    public Response uploadAvatar(@PathVariable("id") String id, @RequestBody String avatarUrl)  {
-//        User user = userService.uploadAvatar(id, avatarUrl);
-        return null;
+    public Response uploadAvatar(@PathVariable("id") String id, @RequestParam("file") MultipartFile file)  {
+        User user = userService.updateAvatar(id,file);
+        return Response.builder(user).build();
     }
 
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)

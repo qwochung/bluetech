@@ -5,6 +5,7 @@ import com.example.bluetech.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ public interface UserService {
     boolean existsByEmail(String email);
     boolean existsByUserName(String userName);
     User update(String id ,  User user);
+    User updateAvatar(String id, MultipartFile file);
     void deActivate(String id);
     void activate(String id);
     List<User> findAll();
