@@ -11,16 +11,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-@Document("user")
-public class User extends BaseEntity {
-     String userName;
-     @JsonIgnore
-     String password;
-     String email;   
-     String phone;
-     LocalDate dateOfBirth;
-     String gender;
-     String avatarUrl;
+     @Document("user")
+     public class User extends BaseEntity {
+          String userName;
+          @JsonIgnore
+          String password;
+          String email;
+          String phone;
+          LocalDate dateOfBirth;
+          String gender;
+          String avatarUrl;
 
      @DBRef
      @JsonIgnore
