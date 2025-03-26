@@ -2,6 +2,7 @@ package com.example.bluetech.entity;
 
 import com.example.bluetech.constant.AccessMode;
 import com.example.bluetech.constant.OwnerType;
+import com.example.bluetech.constant.ReactionType;
 import com.example.bluetech.constant.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Document("post")
 @Data
@@ -36,8 +38,6 @@ public class Post extends BaseEntity {
     int noOfComments;
     @Transient
     int noOfViews;
-
-
 
     public Post update(Post post) {
         if (post.getTextContent() != null) {
