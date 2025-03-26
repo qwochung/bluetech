@@ -2,18 +2,23 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.OwnerType;
+import com.example.bluetech.constant.ReactionType;
 import com.example.bluetech.constant.Status;
 import com.example.bluetech.entity.Post;
+import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.PostRepository;
+import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
 import com.example.bluetech.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl  implements PostService {
@@ -22,6 +27,9 @@ public class PostServiceImpl  implements PostService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReactionRepository reactionRepository;
 
 
     @Override
@@ -49,9 +57,10 @@ public class PostServiceImpl  implements PostService {
     }
 
     @Override
-    public Optional<Post> findById(String id) {
+    public Optional<Post> findById(String id, String userId) {
         return postRepository.findById(id);
     }
+
 
     @Override
     public List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType) {
