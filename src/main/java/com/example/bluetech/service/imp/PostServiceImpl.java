@@ -40,7 +40,7 @@ public class PostServiceImpl  implements PostService {
 
         User user = userService.findById(post.getOwnerId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-        return postRepository.save(post);
+        return this.save(post);
     }
 
     @Override
