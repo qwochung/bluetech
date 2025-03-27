@@ -26,7 +26,6 @@ public class Post extends BaseEntity {
     OwnerType ownerType;
     AccessMode accessMode = AccessMode.PUBLIC;
 
-
     @DBRef
     List<HashTag> hashTags;
     @DBRef
