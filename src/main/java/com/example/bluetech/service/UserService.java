@@ -34,4 +34,5 @@ public interface UserService {
     Invite declineInvite(String userId,  String inviteId);
     List<Invite> getPendingInvite(String userId);
 
+    List<User> findFriendByUserId(String id);
 }

@@ -2,17 +2,11 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.Status;
-import com.example.bluetech.entity.Address;
-import com.example.bluetech.entity.Image;
-import com.example.bluetech.entity.Invite;
-import com.example.bluetech.entity.User;
+import com.example.bluetech.entity.*;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.ImageRepository;
 import com.example.bluetech.repository.UserRepository;
-import com.example.bluetech.service.AddressService;
-import com.example.bluetech.service.ImageService;
-import com.example.bluetech.service.InviteService;
-import com.example.bluetech.service.UserService;
+import com.example.bluetech.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +31,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private FriendsService friendsService;
+
     @Override
     public User save(User user) {
         return userRepository.save(user);
@@ -60,8 +57,7 @@ public class UserServiceImpl implements UserService {
             Address address = addressService.addAddressByIp(ip);
             user.setAddress(address);
         }
-
-        Address address= addressService.save(user.getAddress());
+        Address address = addressService.add(user.getAddress());
         user = userRepository.save(user);
 
         return user;
@@ -175,13 +171,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Invite acceptInvite(String userId, String invite) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         Invite inv = inviteService.findById(invite).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        User invitee = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        User inviter =  userRepository.findById(inv.getInviter().getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+
         if (!userId.equals(inv.getInvitee().getId())) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
 
         inv = inviteService.acceptInvite(inv);
+        Friends friends = friendsService.add(inviter.getId(), invitee.getId());
+
         return inv;
     }
 
@@ -203,6 +203,13 @@ public class UserServiceImpl implements UserService {
         User invitee = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         List<Invite> invites = inviteService.findByInvitee(invitee);
         return invites;
+    }
+
+    @Override
+    public List<User> findFriendByUserId(String userId) {
+        List<String> friendIds = friendsService.findFriendIdByUserId(userId);
+        List<User> friends = userRepository.findAllById(friendIds);
+        return friends;
     }
 
 

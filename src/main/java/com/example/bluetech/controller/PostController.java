@@ -4,13 +4,16 @@ import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.OwnerType;
 import com.example.bluetech.dto.Response;
 import com.example.bluetech.entity.Post;
+import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/post")
@@ -19,7 +22,8 @@ public class PostController {
     @Autowired
     private PostService postService;
 
-
+    @Autowired
+    private ReactionRepository reactionRepository;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public Response post(@RequestBody Post post) {
@@ -28,8 +32,8 @@ public class PostController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Response get(@PathVariable String id) {
-        Post post = postService.findById(id).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
+    public Response get(@PathVariable String id, @RequestParam(required = false) String userId) {
+        Post post = postService.findById(id, userId).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
         return Response.builder(post).build();
 
     }
@@ -59,4 +63,11 @@ public class PostController {
         postService.delete(id);
         return Response.builder("Success").build();
     }
+
+    @RequestMapping(value = "/{postId}/reaction", method = RequestMethod.GET)
+    public Response getUserReaction(@PathVariable String postId, @RequestParam String userId) {
+        Optional<Reaction> reaction = reactionRepository.findByPostIdAndUserId(postId, userId);
+        return Response.builder(reaction.orElse(null)).build();
+    }
+
 }

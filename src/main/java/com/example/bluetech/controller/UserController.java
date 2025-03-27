@@ -3,9 +3,11 @@ package com.example.bluetech.controller;
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.InviteType;
 import com.example.bluetech.dto.Response;
+import com.example.bluetech.entity.Friends;
 import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.service.FriendsService;
 import com.example.bluetech.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServlet;
@@ -25,6 +27,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private FriendsService friendsService;
 
 
     @RequestMapping(value = "", method = RequestMethod.POST)
@@ -131,6 +135,19 @@ public class UserController {
        List<Invite> invites = userService.getPendingInvite(userId);
         return Response.builder(invites).build();
     }
+
+
+
+//    FRIEND
+
+    @RequestMapping(value = "/{id}/friends", method = RequestMethod.GET)
+    public Response getFriends (@PathVariable("id") String id){
+        List<User> friends = userService.findFriendByUserId(id);
+        return Response.builder(friends).build();
+
+    }
+
+
 
 
 }
