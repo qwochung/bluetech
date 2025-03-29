@@ -1,6 +1,7 @@
 package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
+import com.example.bluetech.constant.Status;
 import com.example.bluetech.entity.Friends;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
@@ -60,18 +61,42 @@ public class FriendsServiceImpl implements FriendsService {
                 Criteria.where("user1").is(userId),
                 Criteria.where("user2").is(userId)
         );
-        query.addCriteria(criteria);
+        query.addCriteria(criteria.orOperator(Criteria.where("status").is(Status.ACTIVE)));
         log.info(query.toString());
 
         List<Friends > friendsList = mongoTemplate.find(query, Friends.class);
 
-        List<String> friendIds = friendsList.stream().map( f-> {
+        return friendsList.stream().map(f-> {
             String user1 = f.getUser1();
             String user2 = f.getUser2();
             return userId.equals(user1) ? user2 : user1;
         }).toList();
 
-        return friendIds;
-
     }
+
+    @Override
+    public void delete(String user1, String user2) {
+        if(user1 == null || user2 == null || user1.equals(user2)){
+            throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+        criteria.andOperator(
+                Criteria.where("user1").is(user1).and("user2").is(user2),
+                Criteria.where("user1").is(user2).and("user2").is(user1)
+        );
+        query.addCriteria(criteria);
+
+        Friends friends = mongoTemplate.findOne(query, Friends.class);
+        if (friends == null) {
+            throw new AppException(ErrorCode.NOT_FOUND);
+        }
+        if(friends.getStatus() != Status.DELETED) {
+            friends.setStatus(Status.DELETED);
+            friendsRepository.save(friends);
+        }
+    }
+
+
 }
