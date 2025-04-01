@@ -11,7 +11,7 @@ public interface CommentService {
     Optional<Comment> findById(String id);
     void delete(String id);
     Comment update(Comment comment, String id);
-    List<Comment> findByPost(String PostId);
+    List<Comment> findByPostId(String PostId);
     List<Comment> findByParent(String CommentParentId);
     Comment add(Comment comment);
 }

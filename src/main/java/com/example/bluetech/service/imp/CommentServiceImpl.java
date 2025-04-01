@@ -58,8 +58,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> findByPost(String postId) {
-        Post post = postService.findById(postId).orElseThrow(()->new AppException(ErrorCode.NOT_FOUND));
+    public List<Comment> findByPostId(String postId) {
+        Post post = postService.findById(postId, null).orElseThrow(()->new AppException(ErrorCode.NOT_FOUND));
         return commentRepository.findByPostId(postId);
     }
 
