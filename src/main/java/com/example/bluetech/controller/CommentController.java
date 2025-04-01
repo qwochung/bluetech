@@ -3,14 +3,10 @@ package com.example.bluetech.controller;
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.dto.Response;
 import com.example.bluetech.entity.Comment;
-import com.example.bluetech.entity.Post;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.service.CommentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,7 +50,7 @@ public class CommentController {
 
     @RequestMapping(value = "/post/{postId}", method = RequestMethod.GET)
     public Response getByPost(@PathVariable String postId) {
-        List<Comment> comments = commentService.findByPost(postId);
+        List<Comment> comments = commentService.findByPostId(postId);
         return Response.builder(comments).build();
     }
 
