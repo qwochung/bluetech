@@ -1,6 +1,6 @@
 package com.example.bluetech.controller;
 
-import com.example.bluetech.dto.Response;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Friends;
 import com.example.bluetech.service.FriendsService;
 import org.springframework.beans.factory.annotation.Autowired;

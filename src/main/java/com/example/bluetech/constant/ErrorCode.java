@@ -21,13 +21,16 @@ public enum ErrorCode {
     PERMISSION_NOT_FOUND (404, HttpStatus.NOT_FOUND, HttpStatus.NOT_FOUND.getReasonPhrase()),
     PERMISSION_ALREADY_EXISTS (400, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase()),
     ROLE_ALREADY_EXISTS (400, HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase()),
-
+    PASSWORD_NOT_MATCH (400, HttpStatus.BAD_REQUEST, "Password and confirm password do not match"),
+    UNAUTHORIZED(401,  HttpStatus.UNAUTHORIZED, "Unauthorized"),
+    INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "Invalid Password!"),
+    INVALID_CREDENTIALS(400, HttpStatus.BAD_REQUEST, "Invalid Credentials!"),
 
 
 //    File
     FILE_SIZE_EXCEEDED (500, HttpStatus.INTERNAL_SERVER_ERROR, "File exceeded"),
     FILE_EXTENSION_NOT_SUPPORTED (500, HttpStatus.INTERNAL_SERVER_ERROR, "File extension not supported"),
-
+    MISSING_REQUIRE_PARAM(400, HttpStatus.BAD_REQUEST, "Missing Require Param!"),
 
 
 

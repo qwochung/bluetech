@@ -1,9 +1,7 @@
 package com.example.bluetech.entity;
 
-import com.example.bluetech.dto.IpLocationResponse;
+import com.example.bluetech.dto.respone.IpLocationResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;

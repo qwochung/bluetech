@@ -1,7 +1,7 @@
 package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.dto.IpLocationResponse;
+import com.example.bluetech.dto.respone.IpLocationResponse;
 import com.example.bluetech.entity.Address;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.AddressRepository;
