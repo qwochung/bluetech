@@ -1,4 +1,4 @@
-package com.example.bluetech.dto;
+package com.example.bluetech.dto.respone;
 
 
 import lombok.Data;

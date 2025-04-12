@@ -1,7 +1,7 @@
 package com.example.bluetech.exceptions;
 
 import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.dto.Response;
+import com.example.bluetech.dto.respone.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

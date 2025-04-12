@@ -4,6 +4,7 @@ import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,4 +36,6 @@ public interface UserService {
     List<Invite> getPendingInvite(String userId);
 
     List<User> findFriendByUserId(String id);
+
+    UserDetailsService userDetailsService();
 }
