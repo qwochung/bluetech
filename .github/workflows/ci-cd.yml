@@ -44,7 +44,16 @@ jobs:
             docker pull $DOCKER_IMAGE:latest
             docker stop spring-app || true
             docker rm spring-app || true
-            docker run -d --name bluetech -p 8080:8080 $DOCKER_IMAGE:0.0.1
+#            docker run -d --name bluetech  -p 8080:8080 $DOCKER_IMAGE:0.0.1
+            docker run -d \
+            --name bluetech \
+            -p 8080:8080 \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            $DOCKER_IMAGE:0.0.1
+                    
+                    
             echo "Waiting for app to start..."
             sleep 5
 #            curl --fail http://localhost:8080/actuator/health || (echo "App health check failed!" && exit 1)
