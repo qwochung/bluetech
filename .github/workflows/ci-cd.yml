@@ -6,7 +6,7 @@ on:
       - deploy
 
 env:
-  DOCKER_IMAGE: tqhung/bluetech-CICD
+  DOCKER_IMAGE: tqhung/bluetech
 
 jobs:
   build-and-deploy:
