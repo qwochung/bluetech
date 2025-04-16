@@ -28,4 +28,10 @@ public class AuthController {
         Map<String, Object> response = authService.login(request);
         return Response.builder(response).build();
     }
+
+    @PostMapping("/test")
+    public Response test(@RequestBody Map<String, String> request) {
+
+        return Response.builder("Test oke").build();
+    }
 }
