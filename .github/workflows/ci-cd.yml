@@ -3,7 +3,7 @@ name: Build & Deploy Spring Boot App
 on:
   push:
     branches:
-      - deploy
+      - main
 
 env:
   DOCKER_IMAGE: tqhung/bluetech
@@ -43,13 +43,12 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            echo "DOCKER_IMAGE before : $DOCKER_IMAGE"  # In ra biến DOCKER_IMAGE
-            export DOCKER_IMAGE=${DOCKER_IMAGE}  # Thiết lập lại biến môi trường trong script
-            echo "DOCKER_IMAGE affter: $DOCKER_IMAGE"
-            docker pull tqhung/bluetech:0.0.1
+            DOCKER_IMAGE="tqhung/bluetech"
+            echo "DOCKER_IMAGE : $DOCKER_IMAGE"  # In ra biến DOCKER_IMAGE
+            docker pull $DOCKER_IMAGE:0.0.1
             docker stop bluetech || true
             docker rm bluetech || true
-            docker run -d --name bluetech -p 8080:8080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}  -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} tqhung/bluetech:0.0.1
+            docker run -d --name bluetech -p 8080:8080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}  -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} $DOCKER_IMAGE:0.0.1
             echo "Waiting for app to start..."
             sleep 5
 
