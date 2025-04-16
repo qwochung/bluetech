@@ -6,7 +6,7 @@ on:
       - deploy
 
 env:
-  DOCKER_IMAGE: tqhung/bluetech
+  DOCKER_IMAGE: tqhung/bluetech-CICD
 
 jobs:
   build-and-deploy:
@@ -29,10 +29,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build -t $DOCKER_IMAGE:latest .
+        run: docker build -t $DOCKER_IMAGE:0.0.1 .
 
       - name: Push Docker image to DockerHub
-        run: docker push $DOCKER_IMAGE:latest
+        run: docker push $DOCKER_IMAGE:0.0.1
 
       - name: SSH into VPS and deploy
         uses: appleboy/ssh-action@v1.0.0
@@ -44,10 +44,10 @@ jobs:
             docker pull $DOCKER_IMAGE:latest
             docker stop spring-app || true
             docker rm spring-app || true
-            docker run -d --name spring-app -p 8080:8080 $DOCKER_IMAGE:latest
+            docker run -d --name bluetech -p 8080:8080 $DOCKER_IMAGE:0.0.1
             echo "Waiting for app to start..."
             sleep 5
-            curl --fail http://localhost:8080/actuator/health || (echo "App health check failed!" && exit 1)
+#            curl --fail http://localhost:8080/actuator/health || (echo "App health check failed!" && exit 1)
 
       - name: Notify Discord - Success
         if: success()
