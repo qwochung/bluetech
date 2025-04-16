@@ -1,7 +1,7 @@
 package com.example.bluetech.controller;
 
 import com.example.bluetech.constant.ReactionType;
-import com.example.bluetech.dto.Response;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.service.ReactionService;
 import lombok.RequiredArgsConstructor;

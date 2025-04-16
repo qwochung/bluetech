@@ -1,21 +1,16 @@
 package com.example.bluetech.controller;
 
 import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.constant.InviteType;
-import com.example.bluetech.dto.Response;
-import com.example.bluetech.entity.Friends;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.service.FriendsService;
 import com.example.bluetech.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,7 +1,7 @@
 package com.example.bluetech.controller;
 
 import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.dto.Response;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Image;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.service.ImageService;

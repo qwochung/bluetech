@@ -1,7 +1,6 @@
 package com.example.bluetech.service.ThirdParty;
 
-import com.example.bluetech.dto.IpLocationResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.bluetech.dto.respone.IpLocationResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

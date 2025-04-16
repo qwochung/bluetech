@@ -2,7 +2,7 @@ package com.example.bluetech.controller;
 
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.OwnerType;
-import com.example.bluetech.dto.Response;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.exceptions.AppException;
