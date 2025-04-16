@@ -5,10 +5,7 @@ import com.example.bluetech.dto.request.RegisterRequest;
 import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -27,5 +24,10 @@ public class AuthController {
     public Response login(@RequestBody Map<String, String> request) {
         Map<String, Object> response = authService.login(request);
         return Response.builder(response).build();
+    }
+
+    @GetMapping("")
+    public Response test() {
+        return Response.builder("Test oke").build();
     }
 }

@@ -1,0 +1,94 @@
+name: Build & Deploy Spring Boot App
+
+on:
+  push:
+    branches:
+      - deploy
+
+env:
+  DOCKER_IMAGE: tqhung/bluetech
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+
+      - name: Build project with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build --no-cache -t $DOCKER_IMAGE:0.0.1 .
+
+      - name: Push Docker image to DockerHub
+        run: docker push $DOCKER_IMAGE:0.0.1
+
+
+
+      - name: SSH into VPS and deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "DOCKER_IMAGE before : $DOCKER_IMAGE"  # In ra biến DOCKER_IMAGE
+            export DOCKER_IMAGE=${DOCKER_IMAGE}  # Thiết lập lại biến môi trường trong script
+            echo "DOCKER_IMAGE affter: $DOCKER_IMAGE"
+            docker pull tqhung/bluetech:0.0.1
+            docker stop bluetech || true
+            docker rm bluetech || true
+            docker run -d --name bluetech -p 8080:8080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}  -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} tqhung/bluetech:0.0.1
+            echo "Waiting for app to start..."
+            sleep 5
+
+      - name: Notify Discord - Success
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "content": "**✅ Deploy thành công!** 🚀",
+              "embeds": [{
+                "title": "Thông tin deploy",
+                "color": 3066993,
+                "fields": [
+                  { "name": "Branch", "value": "${{ github.ref_name }}", "inline": true },
+                  { "name": "Người push", "value": "${{ github.actor }}", "inline": true },
+                  { "name": "Commit", "value": "[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})" }
+                ],
+                "footer": { "text": "GitHub Actions | Deploy to VPS" }
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify Discord - Failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "content": "**❌ Deploy thất bại!** 😢",
+              "embeds": [{
+                "title": "Thông tin lỗi",
+                "color": 15158332,
+                "fields": [
+                  { "name": "Branch", "value": "${{ github.ref_name }}", "inline": true },
+                  { "name": "Người push", "value": "${{ github.actor }}", "inline": true },
+                  { "name": "Commit", "value": "[${{ github.event.head_commit.message }}](${{ github.event.head_commit.url }})" }
+                ],
+                "footer": { "text": "GitHub Actions | Deploy to VPS" }
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK }}
