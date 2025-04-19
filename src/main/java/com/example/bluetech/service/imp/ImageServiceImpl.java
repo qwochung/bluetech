@@ -20,7 +20,7 @@ public class ImageServiceImpl implements ImageService {
     private static int maxFileSize = 5;
 
     private static final long MAX_FILE_SIZE = (long) maxFileSize * 1024 * 1024;
-    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/png", "image/jpeg", "image/jpg");
+    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/png", "image/jpeg", "image/jpg, image/*");
 
 
 
