@@ -22,8 +22,10 @@ import java.util.Map;
 public class Post extends BaseEntity {
 
     String textContent;
-    String ownerId;
+//    String ownerId;
     OwnerType ownerType;
+    @DBRef
+    User owner;
     AccessMode accessMode = AccessMode.PUBLIC;
 
     @DBRef
