@@ -9,6 +9,7 @@ import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,17 @@ public class PostController {
         return Response.builder(posts).build();
     }
 
+    @RequestMapping(value = "/feed", method = RequestMethod.POST)
+    public Response feed(
+            @RequestParam() Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction
+            ) {
+        return Response.builder(postService.getFeed(page, size, orderBy, direction)).build();
+    }
+
+
     @RequestMapping(value = "/owner/{ownerId}")
     public Response getByOwner(@PathVariable("ownerId") String ownerId, @Param("type") OwnerType type) {
         List<Post> posts = postService.findByOwnerIdAndOwnerType(ownerId, type);
@@ -69,5 +81,6 @@ public class PostController {
         Optional<Reaction> reaction = reactionRepository.findByPostIdAndUserId(postId, userId);
         return Response.builder(reaction.orElse(null)).build();
     }
+
 
 }
