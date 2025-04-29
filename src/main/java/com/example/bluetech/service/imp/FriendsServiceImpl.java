@@ -62,7 +62,7 @@ public class FriendsServiceImpl implements FriendsService {
                 Criteria.where("user1").is(userId),
                 Criteria.where("user2").is(userId)
         );
-        query.addCriteria(criteria.orOperator(Criteria.where("status").is(Status.ACTIVE)));
+        query.addCriteria(Criteria.where("status").is(Status.ACTIVE));
         log.info(query.toString());
 
         List<Friends > friendsList = mongoTemplate.find(query, Friends.class);
