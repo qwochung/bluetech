@@ -34,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
         if(address.getProvince() == null || address.getDistrict() == null ||
             address.getProvince().isEmpty() || address.getDistrict().isEmpty())
             throw new AppException(ErrorCode.BAD_REQUEST);
-
+        address.setCreatedAt(System.currentTimeMillis());
         return addressRepository.save(address);
     }
 

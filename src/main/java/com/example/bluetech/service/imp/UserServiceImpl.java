@@ -61,6 +61,8 @@ public class UserServiceImpl implements UserService {
             user.setAddress(address);
         }
         Address address = addressService.add(user.getAddress());
+
+        user.setCreatedAt(System.currentTimeMillis());
         user = userRepository.save(user);
 
         return user;
@@ -79,6 +81,7 @@ public class UserServiceImpl implements UserService {
         if (existsByEmail(user.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
+        user.setCreatedAt(System.currentTimeMillis());
         user = userRepository.save(user);
 
         return user;
@@ -156,6 +159,7 @@ public class UserServiceImpl implements UserService {
         User inviter = userRepository.findById(invite.getInviter().getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
         User invitee = userRepository.findById(invite.getInvitee().getId()).orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
 
+        inviter.setCreatedAt(System.currentTimeMillis());
         Invite i = inviteService.add(invite);
         return i;
     }

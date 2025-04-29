@@ -81,6 +81,7 @@ public class ImageServiceImpl implements ImageService {
             try {
                 String url = s3Service.uploadFile(file, key);
                 Image image = Image.create(url,key);
+                image.setCreatedAt(System.currentTimeMillis());
                 imageRepository.save(image);
                 images.add(image);
 

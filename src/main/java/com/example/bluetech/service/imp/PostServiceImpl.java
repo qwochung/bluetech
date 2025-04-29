@@ -48,16 +48,16 @@ public class PostServiceImpl  implements PostService {
 
     @Override
     public Post add(Post post) {
-        if (post.getOwnerId().isEmpty() || post.getOwnerType() == null) {
+        if (post.getOwner()== null || post.getOwnerType() == null) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
         if (post.getTextContent().isEmpty() && post.getImage().isEmpty() ){
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
 
-        User user = userService.findById(post.getOwnerId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        return this.save(post);
+        User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        post.setCreatedAt(System.currentTimeMillis());
+        return postRepository.save(post);
     }
 
     @Override

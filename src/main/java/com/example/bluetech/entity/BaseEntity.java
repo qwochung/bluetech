@@ -11,7 +11,7 @@ public class BaseEntity {
 
     @Id
     private String id;
-    private Long createdAt = System.currentTimeMillis();
+    private Long createdAt ;
     private Long deletedAt;
     private Long updatedAt;
     @Setter
