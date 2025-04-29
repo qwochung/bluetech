@@ -13,6 +13,12 @@ import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
 import com.example.bluetech.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,6 +37,9 @@ public class PostServiceImpl  implements PostService {
     @Autowired
     private ReactionRepository reactionRepository;
 
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public Post save(Post post) {
@@ -53,7 +62,22 @@ public class PostServiceImpl  implements PostService {
 
     @Override
     public List<Post> findAll() {
-        return postRepository.findAll();
+        return postRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("status").is(Status.ACTIVE))
+//                .with(Sort.by(Sort.Direction.DESC, "createdAt"));
+//
+//        return mongoTemplate.find(query, Post.class);
+    }
+
+
+    @Override
+    public List<Post> getFeed(int page, int size, String orderBy, Sort.Direction direction) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("status").is(Status.ACTIVE));
+        query.with(Sort.by(direction, orderBy));
+        query.skip((long) page * size).limit(size);
+        return mongoTemplate.find(query, Post.class);
     }
 
     @Override

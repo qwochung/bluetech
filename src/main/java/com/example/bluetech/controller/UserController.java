@@ -99,6 +99,12 @@ public class UserController {
         return Response.builder(user).build();
     }
 
+
+
+
+
+//    Invite
+
     @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
     public Response inviteUser(@PathVariable("id") String id, @RequestBody Invite invite)  {
         Invite inv = userService.sendInvite(id, invite);
