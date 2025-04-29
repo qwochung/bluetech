@@ -78,9 +78,8 @@ public class CommentServiceImpl implements CommentService {
         if (comment.getOwnerId().isEmpty() || comment.getTextContent().isEmpty()) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
-
         User user = userService.findById(comment.getOwnerId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-
-        return this.save(comment);
+        comment.setCreatedAt(System.currentTimeMillis());
+        return commentRepository.save(comment);
     }
 }

@@ -43,6 +43,7 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public Friends add(String  user1, String  user2) {
         Friends friends = Friends.create(user1, user2);
+        friends.setCreatedAt(System.currentTimeMillis());
         friends = friendsRepository.save(friends);
         return friends;
      }
