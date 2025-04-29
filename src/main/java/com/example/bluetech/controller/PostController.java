@@ -27,7 +27,7 @@ public class PostController {
     private ReactionRepository reactionRepository;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public Response post(@RequestBody Post post) {
+    public Response createPost(@RequestBody Post post) {
         Post p = postService.add(post);
         return  Response.builder(p).build();
     }

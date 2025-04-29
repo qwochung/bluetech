@@ -42,6 +42,7 @@ public class ReactionServiceImpl implements ReactionService {
             newReaction.setPostId(postId);
             newReaction.setUserId(userId);
             newReaction.setReactionType(reactionType);
+            newReaction.setCreatedAt(System.currentTimeMillis());
             reactionRepository.save(newReaction);
         }
 

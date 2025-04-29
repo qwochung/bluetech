@@ -41,6 +41,7 @@ public class AuthServiceImp implements AuthService {
         user.setUserName(request.getUserName());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
+        user.setCreatedAt(System.currentTimeMillis());
         return userRepository.save(user);
     }
 
