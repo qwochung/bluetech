@@ -33,8 +33,7 @@ public enum ErrorCode {
     MISSING_REQUIRE_PARAM(400, HttpStatus.BAD_REQUEST, "Missing Require Param!"),
 
 
-
-    ;
+    ACCOUNT_NOT_VERIFIED(401, HttpStatus.UNAUTHORIZED, "Your account needs to be verified. Please verify now!");
 
 
     private int code;
