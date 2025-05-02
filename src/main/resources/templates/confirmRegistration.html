@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bluetech - Xác nhận tài khoản</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .header {
+      background-color: #0052cc;
+      padding: 20px;
+      text-align: center;
+    }
+    .header img {
+      max-height: 50px;
+    }
+    .content {
+      padding: 30px 20px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #0052cc;
+      color: white !important;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 4px;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    .confirm-text {
+      color: white !important;
+    }
+    .footer {
+      border-top: 1px solid #eee;
+      padding: 20px;
+      font-size: 12px;
+      color: #777;
+      text-align: center;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        width: 100%;
+      }
+      .content {
+        padding: 20px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <img src="https://image-bluetech.s3.amazonaws.com/images/295de9fa-c28b-46e6-889c-162acfb0a838-R.png" alt="Bluetech Logo" />
+  </div>
+  <div class="content">
+    <h2>Xác nhận tài khoản của bạn</h2>
+    <p>Xin chào <span th:text="${userName}"></span>,</p>
+    <p>Cảm ơn bạn đã đăng ký tài khoản tại Bluetech. Để hoàn tất quá trình đăng ký và kích hoạt tài khoản của bạn, vui lòng nhấp vào nút bên dưới:</p>
+
+    <div style="text-align: center;">
+      <a th:href="${link}" class="button"><span class="confirm-text">Xác nhận tài khoản</span></a>
+    </div>
+
+    <p>Hoặc, bạn có thể sao chép và dán liên kết sau vào trình duyệt của mình:</p>
+    <p style="word-break: break-all; background-color: #f5f5f5; padding: 10px; border-radius: 4px;" th:text="${link}"></p>
+
+    <p>Liên kết xác nhận này sẽ hết hạn sau 24 giờ. Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
+
+    <p>Nếu bạn gặp bất kỳ vấn đề nào, vui lòng liên hệ với đội ngũ hỗ trợ của chúng tôi tại <a href="mailto:support@bluetech.com">support@bluetech.com</a>.</p>
+
+    <p>Trân trọng,<br>Đội ngũ Bluetech</p>
+  </div>
+  <div class="footer">
+    <p>© 2025 Bluetech. Tất cả các quyền được bảo lưu.</p>
+    <p>Địa chỉ: [Địa chỉ công ty], Số điện thoại: [Số điện thoại]</p>
+    <p>Email này được gửi tới <span th:text="${to}"></span> vì bạn đã đăng ký tài khoản trên Bluetech.</p>
+  </div>
+</div>
+</body>
+</html>
