@@ -232,14 +232,22 @@ public class UserServiceImpl implements UserService {
         return ip;
     }
 
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsService() {
-            @Override
-            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                return (UserDetails) userRepository.findByEmail(username)
-                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            }
-        };
-    }
+//    public UserDetailsService userDetailsService() {
+//        return new UserDetailsService() {
+//            @Override
+//            public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//                return (UserDetails) userRepository.findByEmail(username)
+//                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//            }
+//        };
+//    }
 
+    @Override
+    public void updateVerificationToken(String token, String id) {
+        Optional<User> user = userRepository.findById(id);
+        user.ifPresent(u -> {
+            u.setVerificationToken(token);
+            userRepository.save(u);
+        });
+    }
 }

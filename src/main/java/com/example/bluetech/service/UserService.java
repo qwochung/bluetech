@@ -37,5 +37,7 @@ public interface UserService {
 
     List<User> findFriendByUserId(String id);
 
-    UserDetailsService userDetailsService();
+    void updateVerificationToken(String token, String id);
+
+//    UserDetailsService userDetailsService();
 }

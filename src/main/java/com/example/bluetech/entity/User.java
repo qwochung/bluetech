@@ -42,7 +42,12 @@ public class User extends BaseEntity   {
      Integer noOfFollow;
      @Transient
      Integer noOfFollowing;
-
+     @JsonIgnore
+     boolean hasVerified;
+     @JsonIgnore
+     private String forgotPasswordToken;
+     @JsonIgnore
+     private String verificationToken;
 
      public void update(User user) {
           if (user.getDateOfBirth() != null) {
