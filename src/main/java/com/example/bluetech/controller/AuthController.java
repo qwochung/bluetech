@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
@@ -48,12 +49,19 @@ public class AuthController {
     }
 
     @GetMapping("/verify-account/confirmation")
-    public Response verifyAccount(
+    public ModelAndView verifyAccount(
             @RequestParam String token,
             @RequestParam String id
     ) {
         Map<String, Object> result = authService.verifyAccount(token, id);
-        return Response.builder(result).build();
+        boolean isSuccess = (boolean) result.get("success");
+
+        if (isSuccess) {
+            return new ModelAndView("comfirmSuccess");
+        } else {
+            return new ModelAndView("comfirmError");
+        }
     }
+
 
 }
