@@ -1,6 +1,7 @@
 package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
+import com.example.bluetech.constant.Status;
 import com.example.bluetech.dto.request.RegisterRequest;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
@@ -52,6 +53,7 @@ public class AuthServiceImp implements AuthService {
         user.setEmail(request.getEmail());
         user.setCreatedAt(System.currentTimeMillis());
         user.setHasVerified(false);
+        user.setStatus(Status.PENDING);
         return userRepository.save(user);
     }
 
@@ -78,7 +80,7 @@ public class AuthServiceImp implements AuthService {
             User user = userRepository.findByEmail(userDetails.getUsername())
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
-            if (!user.isHasVerified()) {
+            if (!user.isHasVerified() && user.getStatus() != Status.ACTIVE) {
                 throw new AppException(ErrorCode.ACCOUNT_NOT_VERIFIED);
             }
 
@@ -132,15 +134,13 @@ public class AuthServiceImp implements AuthService {
         if (token.equals(user.getVerificationToken())) {
             user.setVerificationToken(null);
             user.setHasVerified(true);
+            user.setStatus(Status.ACTIVE);
             userService.save(user);
-
             log.info("Account verification successful");
-
             response.put("success", true);
             response.put("message", "Account has been successfully verified");
         } else {
             log.warn("Invalid verification token");
-
             response.put("success", false);
             response.put("message", "Invalid verification token");
         }
