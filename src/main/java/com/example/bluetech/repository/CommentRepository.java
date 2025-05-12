@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CommentRepository extends MongoRepository<Comment, String> {
     List<Comment> findByPostId(String postId);
-    List<Comment> findByownerId(String ownerId);
-    List<Comment> findByparentId(String parentId);
+    List<Comment> findByOwnerId(String ownerId);
+    List<Comment> findByParentId(String parentId);
 }

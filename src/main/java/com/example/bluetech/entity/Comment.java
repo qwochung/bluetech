@@ -11,8 +11,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
 @Document("comment")
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,7 +21,11 @@ public class Comment extends BaseEntity {
     @Size(max = 500, message = "Content must be less than 500 characters")
     String textContent;
 
-    String ownerId;
+    String ownerType;
+    @DBRef
+    User owner;
+
+
     String postId;
     @DBRef
     Image image;
@@ -35,7 +37,7 @@ public class Comment extends BaseEntity {
     int noOfReply;
 
     @Transient
-    int noOfRepactions;
+    int noOfReactions;
 
     AccessMode accessMode = AccessMode.PUBLIC;
 
