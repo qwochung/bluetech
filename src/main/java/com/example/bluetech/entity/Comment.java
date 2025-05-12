@@ -1,6 +1,7 @@
 package com.example.bluetech.entity;
 
 import com.example.bluetech.constant.AccessMode;
+import com.example.bluetech.constant.OwnerType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,7 +22,7 @@ public class Comment extends BaseEntity {
     @Size(max = 500, message = "Content must be less than 500 characters")
     String textContent;
 
-    String ownerType;
+    OwnerType ownerType;
     @DBRef
     User owner;
 
