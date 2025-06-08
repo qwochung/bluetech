@@ -22,7 +22,6 @@ import java.util.Map;
 public class Post extends BaseEntity {
 
     String textContent;
-//    String ownerId;
     OwnerType ownerType;
     @DBRef
     User owner;
@@ -32,13 +31,22 @@ public class Post extends BaseEntity {
     List<HashTag> hashTags;
     @DBRef
     List<Image> image;
-
     @Transient
     int noOfReactions;
     @Transient
     int noOfComments;
     @Transient
     int noOfViews;
+
+
+    @Transient
+    Boolean isReacted = false;
+
+    @Transient
+    ReactionType userReactionType;
+
+    @Transient
+    Map<ReactionType, Integer> reactionCounts;
 
     public Post update(Post post) {
         if (post.getTextContent() != null) {
@@ -57,6 +65,4 @@ public class Post extends BaseEntity {
 
         return this;
     }
-
-
 }
