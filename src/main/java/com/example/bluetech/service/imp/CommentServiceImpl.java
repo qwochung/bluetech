@@ -7,7 +7,6 @@ import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.CommentRepository;
-import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.service.CommentService;
 import com.example.bluetech.service.PostService;
 import com.example.bluetech.service.UserService;
@@ -70,15 +69,15 @@ public class CommentServiceImpl implements CommentService {
         if(parent.getStatus() == Status.DELETED){
             throw new AppException(ErrorCode.NOT_FOUND);
         }
-        return commentRepository.findByparentId(CommentParentId);
+        return commentRepository.findByParentId(CommentParentId);
     }
 
     @Override
     public Comment add(Comment comment) {
-        if (comment.getOwnerId().isEmpty() || comment.getTextContent().isEmpty()) {
+        if (comment.getOwner().getId().isEmpty() || comment.getTextContent().isEmpty() || comment.getPostId().isEmpty()) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
-        User user = userService.findById(comment.getOwnerId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userService.findById(comment.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         comment.setCreatedAt(System.currentTimeMillis());
         return commentRepository.save(comment);
     }

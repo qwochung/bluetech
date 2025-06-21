@@ -18,13 +18,13 @@ public class CommentController {
     private CommentService commentService;
 
     @RequestMapping(value = "/{id}",method = RequestMethod.GET)
-    public Response get(@PathVariable String id ){
+    public Response getById(@PathVariable String id ){
         Comment comment = commentService.findById(id).orElseThrow(()->  new AppException(ErrorCode.NOT_FOUND));
         return Response.builder(comment).build();
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public Response post(@RequestBody @Valid Comment comment){
+    public Response add(@RequestBody @Valid Comment comment){
         Comment p = commentService.add(comment);
         return  Response.builder(p).build();
     }

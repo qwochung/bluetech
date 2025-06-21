@@ -1,6 +1,7 @@
 package com.example.bluetech.entity;
 
 import com.example.bluetech.constant.AccessMode;
+import com.example.bluetech.constant.OwnerType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -10,8 +11,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 @Document("comment")
 @Data
@@ -23,7 +22,11 @@ public class Comment extends BaseEntity {
     @Size(max = 500, message = "Content must be less than 500 characters")
     String textContent;
 
-    String ownerId;
+    OwnerType ownerType;
+    @DBRef
+    User owner;
+
+
     String postId;
     @DBRef
     Image image;
@@ -35,7 +38,7 @@ public class Comment extends BaseEntity {
     int noOfReply;
 
     @Transient
-    int noOfRepactions;
+    int noOfReactions;
 
     AccessMode accessMode = AccessMode.PUBLIC;
 

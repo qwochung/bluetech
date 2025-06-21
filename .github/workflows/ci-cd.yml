@@ -48,7 +48,14 @@ jobs:
             docker pull $DOCKER_IMAGE:0.0.1
             docker stop bluetech || true
             docker rm bluetech || true
-            docker run -d --name bluetech -p 8080:8080 -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}  -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} $DOCKER_IMAGE:0.0.1
+            docker run -d --name bluetech -p 8080:8080 \
+            -e EMAIL_SENDER=${{secrets.EMAIL_SENDER}} \
+            -e EMAIL_SENDER_PASSWORD="${{secrets.EMAIL_SENDER_PASSWORD}}" \
+            -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}  \
+            -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
+            $DOCKER_IMAGE:0.0.1 
+            
             echo "Waiting for app to start..."
             sleep 5
 
