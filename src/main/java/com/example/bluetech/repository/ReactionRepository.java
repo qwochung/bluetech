@@ -29,4 +29,6 @@ public interface ReactionRepository extends MongoRepository<Reaction, String> {
     Optional<Reaction> findReactionTypeByPostIdAndUserId(String postId, String userId);
     long countByPostId(String postId);
 
+
+    List<Reaction> findByPostId(String postId);
 }

@@ -21,4 +21,5 @@ public interface PostService {
     List<Post> findByTag(String tag);
     Post update(String id,Post post);
     void delete(String id);
+
 }

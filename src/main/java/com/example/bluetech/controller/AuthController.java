@@ -1,19 +1,23 @@
 package com.example.bluetech.controller;
 
+import com.example.bluetech.config.JwtConfig;
 import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.dto.request.LoginRequest;
 import com.example.bluetech.dto.request.RegisterRequest;
 import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.service.AuthService;
 import com.example.bluetech.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Map;
 
@@ -24,6 +28,9 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
+    private final JwtConfig jwtConfig;
+    @Value("${refresh-expiration}")
+    private long maxAge;
 
     @PostMapping("/register")
     public Response register(@RequestBody RegisterRequest registerRequest) {
@@ -31,8 +38,22 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Response login(@RequestBody Map<String, String> request) {
+    public Response login(@RequestBody Map<String, String> request,
+                          HttpServletResponse httpResponse) {
         Map<String, Object> response = authService.login(request);
+        User user = (User) response.get("user");
+        String refreshToken = jwtConfig.generateToken(user, "refresh");
+
+        ResponseCookie responseCookie = ResponseCookie
+                .from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(maxAge)
+                .build();
+
+        httpResponse.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+
         return Response.builder(response).build();
     }
 
@@ -63,5 +84,23 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/refresh-token")
+    public Response refreshToken(@CookieValue("refresh_token") String requestRefreshToken) {
+
+        Jwt decodedOldRefreshToken = this.jwtConfig.checkValidRefreshToken(requestRefreshToken);
+
+        String email = decodedOldRefreshToken.getSubject();
+
+        if (email == null) {
+            throw new AppException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        String newAccessToken = this.jwtConfig.generateToken(user, "access");
+
+        return Response.builder(newAccessToken).build();
+    }
 
 }
