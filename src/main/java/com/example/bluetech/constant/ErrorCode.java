@@ -25,7 +25,7 @@ public enum ErrorCode {
     UNAUTHORIZED(401,  HttpStatus.UNAUTHORIZED, "Unauthorized"),
     INVALID_PASSWORD(400, HttpStatus.BAD_REQUEST, "Invalid Password!"),
     INVALID_CREDENTIALS(400, HttpStatus.BAD_REQUEST, "Invalid Credentials!"),
-
+    INVALID_REFRESH_TOKEN(401, HttpStatus.BAD_GATEWAY, "Invalid or expired token"),
 
 //    File
     FILE_SIZE_EXCEEDED (500, HttpStatus.INTERNAL_SERVER_ERROR, "File exceeded"),

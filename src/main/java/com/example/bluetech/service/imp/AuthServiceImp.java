@@ -58,7 +58,7 @@ public class AuthServiceImp implements AuthService {
     }
 
     @Override
-    public Map<String, Object> login(Map<String, String> request) {
+    public Map<String, Object>  login(Map<String, String> request) {
         String email = request.get("email");
         String password = request.get("password");
 
