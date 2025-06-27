@@ -56,23 +56,26 @@ public class FriendsServiceImpl implements FriendsService {
     @Override
     public List<String> findFriendIdByUserId(String userId) {
         Query query = new Query();
-        Criteria criteria = new Criteria();
 
-        criteria.orOperator(
-                Criteria.where("user1").is(userId),
-                Criteria.where("user2").is(userId)
+        Criteria criteria = new Criteria();
+        criteria.andOperator(
+                Criteria.where("status").is(Status.ACTIVE),
+                new Criteria().orOperator(
+                        Criteria.where("user1").is(userId),
+                        Criteria.where("user2").is(userId)
+                )
         );
-        query.addCriteria(Criteria.where("status").is(Status.ACTIVE));
+
+        query.addCriteria(criteria);
         log.info(query.toString());
 
-        List<Friends > friendsList = mongoTemplate.find(query, Friends.class);
+        List<Friends> friendsList = mongoTemplate.find(query, Friends.class);
 
-        return friendsList.stream().map(f-> {
+        return friendsList.stream().map(f -> {
             String user1 = f.getUser1();
             String user2 = f.getUser2();
             return userId.equals(user1) ? user2 : user1;
         }).toList();
-
     }
 
     @Override
