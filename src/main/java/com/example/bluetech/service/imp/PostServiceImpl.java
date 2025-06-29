@@ -1,9 +1,8 @@
 package com.example.bluetech.service.imp;
 
-import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.constant.OwnerType;
-import com.example.bluetech.constant.ReactionType;
-import com.example.bluetech.constant.Status;
+import com.example.bluetech.constant.*;
+import com.example.bluetech.dto.request.PredictRequest;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
@@ -13,13 +12,17 @@ import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
 import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
+import com.example.bluetech.service.PredictService;
 import com.example.bluetech.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class PostServiceImpl implements PostService {
     @Autowired
@@ -44,6 +48,11 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private PredictService predictService;
+    @Autowired
+    private View error;
+
     @Override
     public Post save(Post post) {
         return postRepository.save(post);
@@ -57,6 +66,25 @@ public class PostServiceImpl implements PostService {
         if (post.getTextContent().isEmpty() && post.getImage().isEmpty()) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
+
+//
+//         try{
+//             predictService.predictContent(new PredictRequest(post.getTextContent()))
+//                     .doOnNext(response ->{
+//                         log.info(response.toString());
+//                     })
+//                     .doOnError(error -> {
+//                         log.warn(error.toString());
+//                     })
+//                     .onErrorResume(e -> Mono.empty())
+//                     .subscribe();
+//         }catch (Exception e){
+//             e.printStackTrace();
+//         }
+
+        // Hard code
+        post.setViolationType(ViolationType.NUDITY);
+        post.setViolationDetected(true);
 
         User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         post.setCreatedAt(System.currentTimeMillis());
