@@ -4,6 +4,8 @@ import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.OwnerType;
 import com.example.bluetech.constant.ReactionType;
 import com.example.bluetech.constant.Status;
+import com.example.bluetech.dto.request.PredictRequest;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
@@ -13,6 +15,7 @@ import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
 import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
+import com.example.bluetech.service.PredictService;
 import com.example.bluetech.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -20,6 +23,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +48,9 @@ public class PostServiceImpl implements PostService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private PredictService predictService;
+
     @Override
     public Post save(Post post) {
         return postRepository.save(post);
@@ -56,6 +63,13 @@ public class PostServiceImpl implements PostService {
         }
         if (post.getTextContent().isEmpty() && post.getImage().isEmpty()) {
             throw new AppException(ErrorCode.BAD_REQUEST);
+        }
+
+        try {
+            Mono<Response> predictContent = predictService.predictContent(new PredictRequest(post.getTextContent()));
+            System.out.println(predictContent);
+        } catch (Exception e) {
+            e.printStackTrace();  // In stacktrace thật
         }
 
         User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
