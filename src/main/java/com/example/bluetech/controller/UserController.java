@@ -1,6 +1,7 @@
 package com.example.bluetech.controller;
 
 import com.example.bluetech.constant.ErrorCode;
+import com.example.bluetech.dto.respone.FriendWithMutualInfo;
 import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
@@ -142,13 +143,17 @@ public class UserController {
 //    FRIEND
 
     @RequestMapping(value = "/{id}/friends", method = RequestMethod.GET)
-    public Response getFriends (@PathVariable("id") String id){
-        List<User> friends = userService.findFriendByUserId(id);
+    public Response getFriendsWithMutualInfo(@PathVariable("id") String id) {
+        List<FriendWithMutualInfo> friends = userService.findFriendsWithMutualInfo(id);
         return Response.builder(friends).build();
-
     }
 
-
+    @RequestMapping(value = "/{userId1}/mutual-friends/{userId2}", method = RequestMethod.GET)
+    public Response getMutualFriends(@PathVariable("userId1") String userId1,
+                                     @PathVariable("userId2") String userId2) {
+        List<User> mutualFriends = userService.findMutualFriends(userId1, userId2);
+        return Response.builder(mutualFriends).build();
+    }
 
 
 }

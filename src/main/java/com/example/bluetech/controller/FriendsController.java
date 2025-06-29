@@ -4,10 +4,7 @@ import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Friends;
 import com.example.bluetech.service.FriendsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/friend")
@@ -33,4 +30,6 @@ public class FriendsController {
             throw new RuntimeException(e);
         }
     }
+
+
 }
