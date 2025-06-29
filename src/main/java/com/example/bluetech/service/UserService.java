@@ -1,5 +1,6 @@
 package com.example.bluetech.service;
 
+import com.example.bluetech.dto.respone.FriendWithMutualInfo;
 import com.example.bluetech.entity.Invite;
 import com.example.bluetech.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,4 +41,6 @@ public interface UserService {
     void updateVerificationToken(String token, String id);
 
 //    UserDetailsService userDetailsService();
+    List<FriendWithMutualInfo> findFriendsWithMutualInfo(String userId);
+    List<User> findMutualFriends(String userId1, String userId2);
 }

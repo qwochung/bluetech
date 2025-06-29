@@ -2,6 +2,7 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.constant.ErrorCode;
 import com.example.bluetech.constant.Status;
+import com.example.bluetech.dto.respone.FriendWithMutualInfo;
 import com.example.bluetech.entity.*;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.repository.ImageRepository;
@@ -16,8 +17,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -250,4 +251,61 @@ public class UserServiceImpl implements UserService {
             userRepository.save(u);
         });
     }
+
+    @Override
+    public List<FriendWithMutualInfo> findFriendsWithMutualInfo(String userId) {
+        List<String> friendIds = friendsService.findFriendIdByUserId(userId);
+        if (friendIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<User> friends = userRepository.findAllById(friendIds);
+        Map<String, Integer> mutualCounts = friendsService.countMutualFriendsForMultipleUsers(userId, friendIds);
+        Map<String, List<String>> mutualFriendsMap = friendsService.findMutualFriendsForMultipleUsers(userId, friendIds);
+
+        Set<String> allMutualFriendIds = mutualFriendsMap.values().stream()
+                .flatMap(List::stream)
+                .filter(id -> !id.equals(friendIds))
+                .collect(Collectors.toSet());
+
+        Map<String, User> mutualFriendUsers;
+        if (!allMutualFriendIds.isEmpty()) {
+            List<User> mutualUsers = userRepository.findAllById(allMutualFriendIds);
+            mutualFriendUsers = mutualUsers.stream()
+                    .collect(Collectors.toMap(User::getId, user -> user));
+        } else {
+            mutualFriendUsers = new HashMap<>();
+        }
+
+        return friends.stream()
+                .map(friend -> {
+                    String friendId = friend.getId();
+                    int mutualCount = mutualCounts.getOrDefault(friendId, 0);
+                    List<String> mutualIds = mutualFriendsMap.getOrDefault(friendId, new ArrayList<>())
+                            .stream()
+                            .filter(id -> !id.equals(friendId))
+                            .collect(Collectors.toList());
+                    List<User> topMutualFriends = mutualIds.stream()
+                            .limit(2)
+                            .map(mutualFriendUsers::get)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+
+                    return FriendWithMutualInfo.fromUser(friend, mutualCount, topMutualFriends);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<User> findMutualFriends(String userId1, String userId2) {
+        User user1 = userRepository.findById(userId1)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        User user2 = userRepository.findById(userId2)
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND));
+        List<String> mutualFriendIds = friendsService.findMutualFriends(userId1, userId2);
+        List<User> mutualFriends = userRepository.findAllById(mutualFriendIds);
+        return mutualFriends;
+    }
+
+
 }
