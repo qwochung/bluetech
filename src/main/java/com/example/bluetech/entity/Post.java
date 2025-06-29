@@ -1,9 +1,6 @@
 package com.example.bluetech.entity;
 
-import com.example.bluetech.constant.AccessMode;
-import com.example.bluetech.constant.OwnerType;
-import com.example.bluetech.constant.ReactionType;
-import com.example.bluetech.constant.Status;
+import com.example.bluetech.constant.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -31,13 +28,20 @@ public class Post extends BaseEntity {
     List<HashTag> hashTags;
     @DBRef
     List<Image> image;
+
+    Boolean violationDetected;
+
+    ViolationType violationType;
+
+
     @Transient
     int noOfReactions;
+
     @Transient
     int noOfComments;
+
     @Transient
     int noOfViews;
-
 
     @Transient
     Boolean isReacted = false;
