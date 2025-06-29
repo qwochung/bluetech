@@ -1,9 +1,6 @@
 package com.example.bluetech.service.imp;
 
-import com.example.bluetech.constant.ErrorCode;
-import com.example.bluetech.constant.OwnerType;
-import com.example.bluetech.constant.ReactionType;
-import com.example.bluetech.constant.Status;
+import com.example.bluetech.constant.*;
 import com.example.bluetech.dto.request.PredictRequest;
 import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Post;
@@ -17,12 +14,14 @@ import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
 import com.example.bluetech.service.PredictService;
 import com.example.bluetech.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.View;
 import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
@@ -31,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class PostServiceImpl implements PostService {
     @Autowired
@@ -50,6 +50,8 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private PredictService predictService;
+    @Autowired
+    private View error;
 
     @Override
     public Post save(Post post) {
@@ -65,12 +67,24 @@ public class PostServiceImpl implements PostService {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
 
-        try {
-            Mono<Response> predictContent = predictService.predictContent(new PredictRequest(post.getTextContent()));
-            System.out.println(predictContent);
-        } catch (Exception e) {
-            e.printStackTrace();  // In stacktrace thật
-        }
+//
+//         try{
+//             predictService.predictContent(new PredictRequest(post.getTextContent()))
+//                     .doOnNext(response ->{
+//                         log.info(response.toString());
+//                     })
+//                     .doOnError(error -> {
+//                         log.warn(error.toString());
+//                     })
+//                     .onErrorResume(e -> Mono.empty())
+//                     .subscribe();
+//         }catch (Exception e){
+//             e.printStackTrace();
+//         }
+
+        // Hard code
+        post.setViolationType(ViolationType.NUDITY);
+        post.setViolationDetected(true);
 
         User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         post.setCreatedAt(System.currentTimeMillis());
