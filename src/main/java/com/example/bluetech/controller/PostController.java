@@ -12,7 +12,6 @@ import com.example.bluetech.service.PostService;
 import com.example.bluetech.service.imp.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -42,7 +41,7 @@ public class PostController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Response get(@PathVariable String id, @RequestParam(required = false) String userId) {
-        Post post = postService.findById(id, userId).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
+        Post post = postService.findByIdAndUserId(id, userId).orElseThrow(()-> new AppException(ErrorCode.NOT_FOUND));
         return Response.builder(post).build();
 
     }

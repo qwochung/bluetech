@@ -1,14 +1,19 @@
 package com.example.bluetech.service;
 
-import com.example.bluetech.dto.request.PredictRequest;
-import com.example.bluetech.dto.respone.Response;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
+import com.example.bluetech.constant.ReferencesType;
+import com.example.bluetech.entity.Predict;
+import org.apache.coyote.BadRequestException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PredictService {
-    public Mono<Response> predictContent(@RequestBody PredictRequest request);
-    public Mono<Response> predictImage(List<MultipartFile> files);
+    Predict save(Predict predict);
+    Predict create (Predict predict) throws BadRequestException;
+    Predict update (Predict predict);
+
+    Optional<Predict> findById(String id);
+    List<Predict> findAll();
+    Optional<Predict> findByReferencesTypeAndReferenceIdIn(ReferencesType referencesType, List<String> referenceId);
+
 }

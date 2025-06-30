@@ -11,11 +11,11 @@ public interface PostService {
     Post save(Post post);
     Post add(Post post);
     List<Post> findAll();
-//    Optional<Post> findById(String id);
+    Optional<Post> findById(String id);
 
     List<Post> getFeed(int page, int size, String orderBy, Sort.Direction direction);
 
-    Optional<Post> findById(String id, String userId);
+    Optional<Post> findByIdAndUserId(String id, String userId);
 
     List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType);
     List<Post> findByTag(String tag);

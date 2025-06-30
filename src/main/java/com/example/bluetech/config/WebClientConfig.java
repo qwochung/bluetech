@@ -1,6 +1,6 @@
 package com.example.bluetech.config;
 
-import com.example.bluetech.repository.client.PredictClient;
+import com.example.bluetech.repository.client.PredictClientRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,10 +18,10 @@ public class WebClientConfig {
     }
 
     @Bean
-    PredictClient predictClient(WebClient webClient) {
+    PredictClientRepository predictClient(WebClient webClient) {
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory
                 .builderFor(WebClientAdapter.create(webClient)).build();
 
-        return httpServiceProxyFactory.createClient(PredictClient.class);
+        return httpServiceProxyFactory.createClient(PredictClientRepository.class);
     }
 }
