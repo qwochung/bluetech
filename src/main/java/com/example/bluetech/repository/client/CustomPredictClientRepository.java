@@ -10,13 +10,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
 
-public class CustomPredictClient {
+public class CustomPredictClientRepository {
     private final WebClient webClient;
     public Mono<Response> predictImage(List<MultipartFile> imageFiles) {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();

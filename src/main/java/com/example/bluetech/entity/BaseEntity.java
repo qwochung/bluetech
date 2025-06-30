@@ -14,7 +14,7 @@ public class BaseEntity {
     private Long createdAt ;
     private Long deletedAt;
     private Long updatedAt;
-    @Setter
+//    @Setter
     private Status status = Status.ACTIVE;
 
 

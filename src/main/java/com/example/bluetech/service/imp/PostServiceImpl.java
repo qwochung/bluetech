@@ -1,8 +1,8 @@
 package com.example.bluetech.service.imp;
 
+import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.*;
-import com.example.bluetech.dto.request.PredictRequest;
-import com.example.bluetech.dto.respone.Response;
+import com.example.bluetech.messaging.message.PostPredictMessage;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
@@ -12,17 +12,19 @@ import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
 import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
-import com.example.bluetech.service.PredictService;
 import com.example.bluetech.service.UserService;
+import com.example.bluetech.service.client.PredictClientService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.View;
-import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,26 +34,34 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PostServiceImpl implements PostService {
-    @Autowired
-    private PostRepository postRepository;
 
     @Autowired
-    private UserService userService;
+    PostRepository postRepository;
 
     @Autowired
-    private ReactionRepository reactionRepository;
+    UserService userService;
 
     @Autowired
-    private CommentRepository commentRepository;
+    ReactionRepository reactionRepository;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    CommentRepository commentRepository;
 
     @Autowired
-    private PredictService predictService;
+    MongoTemplate mongoTemplate;
+
     @Autowired
-    private View error;
+    PredictClientService predictClientService;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
+
+
+
 
     @Override
     public Post save(Post post) {
@@ -67,28 +77,20 @@ public class PostServiceImpl implements PostService {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
 
-//
-//         try{
-//             predictService.predictContent(new PredictRequest(post.getTextContent()))
-//                     .doOnNext(response ->{
-//                         log.info(response.toString());
-//                     })
-//                     .doOnError(error -> {
-//                         log.warn(error.toString());
-//                     })
-//                     .onErrorResume(e -> Mono.empty())
-//                     .subscribe();
-//         }catch (Exception e){
-//             e.printStackTrace();
-//         }
-
         // Hard code
         post.setViolationType(ViolationType.NUDITY);
         post.setViolationDetected(true);
 
         User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         post.setCreatedAt(System.currentTimeMillis());
-        return postRepository.save(post);
+        Post savedPost = postRepository.save(post);
+
+        PostPredictMessage msg = new PostPredictMessage(savedPost.getId(), savedPost.getTextContent());
+        log.info("Send message: {}", msg);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_DELAY_KEY, msg);
+
+        return  savedPost;
     }
 
     @Override

@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 @Repository
 @HttpExchange(url = "/api/v1/predict") // prefix chung
 
-public interface PredictClient {
+public interface PredictClientRepository {
     @PostExchange(url = "/content", contentType = MediaType.APPLICATION_JSON_VALUE)
     Mono<Response> predictContent(@RequestBody PredictRequest request );
 
