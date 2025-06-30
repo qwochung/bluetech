@@ -14,6 +14,6 @@ public interface PredictService {
 
     Optional<Predict> findById(String id);
     List<Predict> findAll();
-    List<Predict> findByReferencesTypeAndReferenceIdIn(ReferencesType referencesType, List<String> referenceId);
+    Optional<Predict> findByReferencesTypeAndReferenceIdIn(ReferencesType referencesType, List<String> referenceId);
 
 }

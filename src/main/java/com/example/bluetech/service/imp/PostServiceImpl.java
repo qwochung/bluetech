@@ -12,12 +12,14 @@ import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
 import com.example.bluetech.repository.ReactionRepository;
 import com.example.bluetech.service.PostService;
+import com.example.bluetech.service.PredictService;
 import com.example.bluetech.service.UserService;
 import com.example.bluetech.service.client.PredictClientService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -26,10 +28,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,10 +53,11 @@ public class PostServiceImpl implements PostService {
     MongoTemplate mongoTemplate;
 
     @Autowired
-    PredictClientService predictClientService;
+    PredictService predictService;
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
 
 
 
@@ -76,11 +76,6 @@ public class PostServiceImpl implements PostService {
         if (post.getTextContent().isEmpty() && post.getImage().isEmpty()) {
             throw new AppException(ErrorCode.BAD_REQUEST);
         }
-
-        // Hard code
-        post.setViolationType(ViolationType.NUDITY);
-        post.setViolationDetected(true);
-
         User user = userService.findById(post.getOwner().getId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         post.setCreatedAt(System.currentTimeMillis());
         Post savedPost = postRepository.save(post);
@@ -88,7 +83,14 @@ public class PostServiceImpl implements PostService {
         PredictMessage msg = new PredictMessage(savedPost.getId(), ReferencesType.POST, savedPost.getTextContent());
         log.info("Send message: {}", msg);
 
-        rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_DELAY_KEY, msg);
+        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.ROUTING_DELAY_KEY,
+                msg,
+                correlationData
+        );
 
         return  savedPost;
     }

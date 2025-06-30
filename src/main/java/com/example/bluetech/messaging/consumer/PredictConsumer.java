@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class PostPredictConsumer {
+public class PredictConsumer {
     PredictClientService predictClientService;
     PredictService predictService;
     PostService postService;
