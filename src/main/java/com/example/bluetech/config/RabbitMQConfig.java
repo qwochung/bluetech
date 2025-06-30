@@ -1,5 +1,6 @@
 package com.example.bluetech.config;
 
+import com.example.bluetech.messaging.message.PredictMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.DefaultClassMapper;
@@ -43,7 +44,7 @@ public class RabbitMQConfig {
         Map<String, Object> args = new HashMap<>();
         args.put("x-dead-letter-exchange", EXCHANGE);
         args.put("x-dead-letter-routing-key", ROUTING_PREDICT_KEY);
-        args.put("x-message-ttl", 10000); // delay 5 giây
+        args.put("x-message-ttl", 60000);
         return QueueBuilder.durable(DELAY_QUEUE).withArguments(args).build();
     }
 
@@ -67,18 +68,25 @@ public class RabbitMQConfig {
     @Bean
     public MessageConverter jsonMessageConverter() {
         Jackson2JsonMessageConverter converter = new Jackson2JsonMessageConverter();
-
-        DefaultJackson2JavaTypeMapper typeMapper = new DefaultJackson2JavaTypeMapper();
-        typeMapper.setTrustedPackages("*"); // hoặc chỉ gói của anh: "com.example.bluetech.messaging.message"
-
-        converter.setJavaTypeMapper(typeMapper);
+        DefaultClassMapper classMapper = new DefaultClassMapper();
+        Map<String, Class<?>> idClassMapping = new HashMap<>();
+        idClassMapping.put("com.example.bluetech.messaging.message.PredictMessage", PredictMessage.class);
+        classMapper.setIdClassMapping(idClassMapping);
+        converter.setClassMapper(classMapper);
         return converter;
     }
+
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
+        template.setConfirmCallback((correlationData, ack, cause) -> {
+            if (ack) {
+                log.info("Message delivered successfully");
+            } else {
+                log.error("Message delivery failed: {}", cause);
+            }
+        });
         template.setMessageConverter(jsonMessageConverter());
-        // Custom message post-processor để xóa headers gây lỗi
         template.setBeforePublishPostProcessors(message -> {
             message.getMessageProperties().getHeaders().remove("deliveryTag");
             message.getMessageProperties().getHeaders().remove("contentLength");
