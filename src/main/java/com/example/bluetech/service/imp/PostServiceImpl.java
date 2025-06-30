@@ -2,7 +2,7 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.*;
-import com.example.bluetech.messaging.message.PostPredictMessage;
+import com.example.bluetech.messaging.message.PredictMessage;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
@@ -85,7 +85,7 @@ public class PostServiceImpl implements PostService {
         post.setCreatedAt(System.currentTimeMillis());
         Post savedPost = postRepository.save(post);
 
-        PostPredictMessage msg = new PostPredictMessage(savedPost.getId(), savedPost.getTextContent());
+        PredictMessage msg = new PredictMessage(savedPost.getId(), ReferencesType.POST, savedPost.getTextContent());
         log.info("Send message: {}", msg);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.EXCHANGE, RabbitMQConfig.ROUTING_DELAY_KEY, msg);
@@ -102,6 +102,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Optional<Post> findById(String id) {
+        return postRepository.findById(id);
+    }
+
+    @Override
     public List<Post> getFeed(int page, int size, String orderBy, Sort.Direction direction) {
         Query query = new Query();
         query.addCriteria(Criteria.where("status").is(Status.ACTIVE));
@@ -115,7 +120,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Optional<Post> findById(String id, String userId) {
+    public Optional<Post> findByIdAndUserId(String id, String userId) {
         Optional<Post> postOpt = postRepository.findById(id);
         if (postOpt.isPresent()) {
             Post post = postOpt.get();
