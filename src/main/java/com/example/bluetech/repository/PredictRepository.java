@@ -11,5 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface PredictRepository extends MongoRepository<Predict, String> {
-    Optional<Predict> findByReferencesTypeAndReferencesIdIn(ReferencesType referencesType, Collection<String> referencesIds);
+    Optional<Predict> findByReferencesTypeAndReferencesId(ReferencesType referencesType, String referencesIds);
+    Optional<Predict> findByReferencesTypeAndReferencesIdAndViolationDetected(ReferencesType referencesType, String referenceId, Boolean violationDetected);
 }

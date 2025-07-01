@@ -52,6 +52,9 @@ public class Post extends BaseEntity {
     @Transient
     Map<ReactionType, Integer> reactionCounts;
 
+    @Transient
+    Boolean violenceDetected;
+
     public Post update(Post post) {
         if (post.getTextContent() != null) {
             this.textContent = post.getTextContent();

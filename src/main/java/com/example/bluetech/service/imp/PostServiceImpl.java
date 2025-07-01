@@ -2,6 +2,7 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.*;
+import com.example.bluetech.entity.Predict;
 import com.example.bluetech.messaging.message.PredictMessage;
 import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
@@ -61,8 +62,6 @@ public class PostServiceImpl implements PostService {
 
 
 
-
-
     @Override
     public Post save(Post post) {
         return postRepository.save(post);
@@ -116,6 +115,9 @@ public class PostServiceImpl implements PostService {
         query.skip((long) page * size).limit(size);
 
         List<Post> posts = mongoTemplate.find(query, Post.class);
+
+        posts = violenceDetected(posts);
+
         return posts.stream()
                 .map(this::enrichPostWithCounts)
                 .collect(Collectors.toList());
@@ -224,4 +226,23 @@ public class PostServiceImpl implements PostService {
 
         return reactionCounts;
     }
+
+
+    private List<Post> violenceDetected(List<Post> posts) {
+        for (Post post : posts) {
+            Predict predict = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(ReferencesType.POST, post.getId(), true)
+                    .orElse(null);
+            // TODO: Sử lý ảnh
+            if (predict != null && predict.getViolationDetected() ) {
+                post.setViolationDetected(true);
+            }
+            else {
+                post.setViolationDetected(false);
+            }
+        }
+
+        return posts;
+    }
+
+
 }
