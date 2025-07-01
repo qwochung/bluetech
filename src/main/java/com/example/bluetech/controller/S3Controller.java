@@ -27,18 +27,15 @@ public class S3Controller {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public Response upload(@RequestParam("files") MultipartFile[] files) {
         List<String> fileUrls = new ArrayList<>();
-
-        Mono<Response> predict= customPredictClientRepository.predictImage(List.of(files));
-//        try{
-//            for (MultipartFile file : files) {
-//                String url = s3Service.uploadFile(file, null);
-//                fileUrls.add(url);
-//            }
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-
-        return Response.builder(predict).build();
+        try{
+            for (MultipartFile file : files) {
+                String url = s3Service.uploadFile(file, null);
+                fileUrls.add(url);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return Response.builder(fileUrls).build();
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)

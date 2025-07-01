@@ -22,12 +22,10 @@ public class Predict extends BaseEntity {
     double confidence;
     Map<String, Object> metadata;
 
-    public static Predict convert(Object object, ReferencesType type, String referencesId ) {
+    public  Predict convert( Predict predict ,Object data ) {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-        Predict predict = objectMapper.convertValue(object, Predict.class);
-        predict.setReferencesId(referencesId);
-        predict.setReferencesType(type);
+        predict = objectMapper.convertValue(data, Predict.class);
         return predict;
     }
 

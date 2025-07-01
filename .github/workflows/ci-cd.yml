@@ -3,7 +3,8 @@ name: Build & Deploy Spring Boot App
 on:
   push:
     branches:
-      - main
+#      - main
+      - deploy
 
 env:
   DOCKER_IMAGE: tqhung/bluetech

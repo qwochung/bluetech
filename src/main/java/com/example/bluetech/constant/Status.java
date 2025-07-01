@@ -5,7 +5,8 @@ public enum Status {
 
     PENDING, REVOKE ,ACCEPTED, DECLINED,
 
-    HIDDEN, LOCKED
+    HIDDEN, LOCKED,
 
+    SUCCESS, FAILURE, UNKNOWN;
 
 }

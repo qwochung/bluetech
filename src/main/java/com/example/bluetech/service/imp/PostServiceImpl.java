@@ -2,11 +2,10 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.*;
+import com.example.bluetech.entity.*;
 import com.example.bluetech.messaging.message.PredictMessage;
-import com.example.bluetech.entity.Post;
-import com.example.bluetech.entity.Reaction;
-import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.messaging.producer.PredictProducer;
 import com.example.bluetech.repository.CommentRepository;
 import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
@@ -58,7 +57,8 @@ public class PostServiceImpl implements PostService {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
-
+    @Autowired
+    PredictProducer predictProducer;
 
 
 
@@ -80,18 +80,7 @@ public class PostServiceImpl implements PostService {
         post.setCreatedAt(System.currentTimeMillis());
         Post savedPost = postRepository.save(post);
 
-        PredictMessage msg = new PredictMessage(savedPost.getId(), ReferencesType.POST, savedPost.getTextContent());
-        log.info("Send message: {}", msg);
-
-        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
-
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.EXCHANGE,
-                RabbitMQConfig.ROUTING_DELAY_KEY,
-                msg,
-                correlationData
-        );
-
+        predictProducer.addToMessagesQueue(savedPost);
         return  savedPost;
     }
 
@@ -116,6 +105,9 @@ public class PostServiceImpl implements PostService {
         query.skip((long) page * size).limit(size);
 
         List<Post> posts = mongoTemplate.find(query, Post.class);
+
+        posts = violenceDetected(posts);
+
         return posts.stream()
                 .map(this::enrichPostWithCounts)
                 .collect(Collectors.toList());
@@ -224,4 +216,37 @@ public class PostServiceImpl implements PostService {
 
         return reactionCounts;
     }
+
+
+    private List<Post> violenceDetected(List<Post> posts) {
+        for (Post post : posts) {
+            Predict predictContent = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(ReferencesType.POST, post.getId(), true)
+                    .orElse(null);
+
+            if (predictContent != null && predictContent.getViolationDetected() ) {
+                post.setViolationDetected(true);
+            }
+            else {
+                List<Image> images = post.getImage();
+                for (Image image : images) {
+                    Predict predictImage = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(
+                            ReferencesType.IMAGE,
+                            image.getId(),
+                            true
+                    ).orElse(null);
+                    if (predictImage != null && predictImage.getViolationDetected()) {
+                        post.setViolationDetected(true);
+                    }
+                                        else {
+                        post.setViolationDetected(false);
+                    }
+                }
+
+            }
+        }
+
+        return posts;
+    }
+
+
 }

@@ -51,10 +51,14 @@ public class PredictServiceImpl implements PredictService {
     }
 
     @Override
-    public Optional<Predict> findByReferencesTypeAndReferenceIdIn(ReferencesType referencesType, List<String> referenceIds) {
-        return predictRepository.findByReferencesTypeAndReferencesIdIn(referencesType, referenceIds);
+    public Optional<Predict> findByReferencesTypeAndReferenceId(ReferencesType referencesType, String referenceId) {
+        return predictRepository.findByReferencesTypeAndReferencesId(referencesType, referenceId);
     }
 
+    @Override
+    public Optional<Predict> findByReferencesTypeAndReferenceIdAndViolationDetected(ReferencesType referencesType, String referenceId, Boolean violationDetected) {
+        return predictRepository.findByReferencesTypeAndReferencesIdAndViolationDetected(referencesType, referenceId, violationDetected);
+    }
 
 
 }
