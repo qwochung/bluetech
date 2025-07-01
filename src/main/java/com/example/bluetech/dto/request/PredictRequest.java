@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PredictRequest {
-    private String text;
+    private String content;
+    private String url;
 }

@@ -26,21 +26,33 @@ public class PredictProducer {
 
 
     public void addToMessagesQueue(Image image) {
-        PredictMessage msg = new PredictMessage(image.getId(), ReferencesType.IMAGE,"");
+        PredictMessage msg =  PredictMessage.builder()
+                .referencesId(image.getId())
+                .referencesType(ReferencesType.IMAGE)
+                .url(image.getUrl())
+                .build();
         log.info("Send message: {}", msg);
         send(msg);
 
     }
 
     public void addToMessagesQueue(Post post) {
-        PredictMessage msg = new PredictMessage( post.getId(), ReferencesType.POST, post.getTextContent());
+        PredictMessage msg =  PredictMessage.builder()
+                .referencesId(post.getId())
+                .referencesType(ReferencesType.POST)
+                .content(post.getTextContent())
+                .build();
         log.info("Send message: {}", msg);
         send(msg);
 
     }
 
     public void addToMessagesQueue(Comment cmt) {
-        PredictMessage msg = new PredictMessage( cmt.getId(), ReferencesType.COMMENT, cmt.getTextContent());
+        PredictMessage msg =  PredictMessage.builder()
+                .referencesId(cmt.getId())
+                .referencesType(ReferencesType.COMMENT)
+                .comment(cmt.getTextContent())
+                .build();
         log.info("Send message: {}", msg);
 //        send(msg);
 

@@ -16,8 +16,9 @@ public interface PredictClientRepository {
     @PostExchange(url = "/content", contentType = MediaType.APPLICATION_JSON_VALUE)
     Mono<Response> predictContent(@RequestBody PredictRequest request );
 
-    @PostExchange(url = "/image", contentType = MediaType.APPLICATION_JSON_VALUE)
-    Mono<Response> predictImage(@RequestBody PredictRequest request );
+
+    @PostExchange(url = "/image-url", contentType = MediaType.APPLICATION_JSON_VALUE)
+    Mono<Response> predictImageFromUrl(@RequestBody PredictRequest request );
 }
 
 

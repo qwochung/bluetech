@@ -105,8 +105,11 @@ public class ImageServiceImpl implements ImageService {
                 String url = s3Service.uploadFile(file, key);
                 Image image = Image.create(url,key);
                 image.setCreatedAt(System.currentTimeMillis());
-                imageRepository.save(image);
+                image= imageRepository.save(image);
                 images.add(image);
+
+                predictProducer.addToMessagesQueue(image);
+
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
