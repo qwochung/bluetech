@@ -29,4 +29,8 @@ public class PredictClientService {
     public Mono<Response> predictImage(List<MultipartFile> files) {
         return customPredictClientRepository.predictImage(files);
     }
+
+    public Mono<Response> predictImageFromUrl(PredictRequest request) {
+        return predictClientRepository.predictImageFromUrl(request);
+    }
 }
