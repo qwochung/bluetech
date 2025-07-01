@@ -1,24 +1,39 @@
 package com.example.bluetech.service.imp;
 
+import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.ErrorCode;
+import com.example.bluetech.constant.ReferencesType;
 import com.example.bluetech.constant.Status;
+import com.example.bluetech.dto.respone.Response;
 import com.example.bluetech.entity.Image;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.messaging.message.PredictMessage;
+import com.example.bluetech.messaging.producer.PredictProducer;
 import com.example.bluetech.repository.ImageRepository;
 import com.example.bluetech.service.ImageService;
 import com.example.bluetech.service.ThirdParty.S3Service;
+import com.example.bluetech.service.client.PredictClientService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ImageServiceImpl implements ImageService {
 
     private static int maxFileSize = 5;
-
     private static final long MAX_FILE_SIZE = (long) maxFileSize * 1024 * 1024;
     private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/png", "image/jpeg", "image/jpg", "image/*");
 
@@ -30,6 +45,11 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private S3Service s3Service;
 
+
+    RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    PredictProducer predictProducer;
 
 
     @Override
@@ -53,7 +73,10 @@ public class ImageServiceImpl implements ImageService {
         try {
             String url = s3Service.uploadFile(file, key);
             Image image = Image.create(url,key);
-            return imageRepository.save(image);
+            image = imageRepository.save(image);
+
+            predictProducer.addToMessagesQueue(image);
+            return image;
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -115,4 +138,8 @@ public class ImageServiceImpl implements ImageService {
             imageRepository.save(image);
         }
     }
+
+
+
+
 }

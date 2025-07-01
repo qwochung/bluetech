@@ -8,6 +8,7 @@ import com.example.bluetech.entity.Post;
 import com.example.bluetech.entity.Reaction;
 import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
+import com.example.bluetech.messaging.producer.PredictProducer;
 import com.example.bluetech.repository.CommentRepository;
 import com.example.bluetech.repository.PostRepository;
 import com.example.bluetech.repository.ReactionCountProjection;
@@ -59,6 +60,9 @@ public class PostServiceImpl implements PostService {
     @Autowired
     RabbitTemplate rabbitTemplate;
 
+    @Autowired
+    PredictProducer predictProducer;
+
 
 
 
@@ -79,18 +83,7 @@ public class PostServiceImpl implements PostService {
         post.setCreatedAt(System.currentTimeMillis());
         Post savedPost = postRepository.save(post);
 
-        PredictMessage msg = new PredictMessage(savedPost.getId(), ReferencesType.POST, savedPost.getTextContent());
-        log.info("Send message: {}", msg);
-
-        CorrelationData correlationData = new CorrelationData(UUID.randomUUID().toString());
-
-        rabbitTemplate.convertAndSend(
-                RabbitMQConfig.EXCHANGE,
-                RabbitMQConfig.ROUTING_DELAY_KEY,
-                msg,
-                correlationData
-        );
-
+        predictProducer.addToMessagesQueue(savedPost);
         return  savedPost;
     }
 

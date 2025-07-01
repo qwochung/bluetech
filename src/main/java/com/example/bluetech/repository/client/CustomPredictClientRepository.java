@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class CustomPredictClientRepository {
         MultipartBodyBuilder builder = new MultipartBodyBuilder();
         for (MultipartFile file : imageFiles) {
             builder.part("files", file.getResource())
-                    .filename(file.getOriginalFilename())
-                    .contentType(MediaType.parseMediaType(file.getContentType()));
+                    .filename(Objects.requireNonNull(file.getOriginalFilename()))
+                    .contentType(MediaType.parseMediaType(Objects.requireNonNull(file.getContentType())));
         }
         return webClient.post()
                 .uri("/api/v1/predict/image")
