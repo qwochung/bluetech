@@ -2,11 +2,8 @@ package com.example.bluetech.service.imp;
 
 import com.example.bluetech.config.RabbitMQConfig;
 import com.example.bluetech.constant.*;
-import com.example.bluetech.entity.Predict;
+import com.example.bluetech.entity.*;
 import com.example.bluetech.messaging.message.PredictMessage;
-import com.example.bluetech.entity.Post;
-import com.example.bluetech.entity.Reaction;
-import com.example.bluetech.entity.User;
 import com.example.bluetech.exceptions.AppException;
 import com.example.bluetech.messaging.producer.PredictProducer;
 import com.example.bluetech.repository.CommentRepository;
@@ -223,14 +220,28 @@ public class PostServiceImpl implements PostService {
 
     private List<Post> violenceDetected(List<Post> posts) {
         for (Post post : posts) {
-            Predict predict = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(ReferencesType.POST, post.getId(), true)
+            Predict predictContent = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(ReferencesType.POST, post.getId(), true)
                     .orElse(null);
-            // TODO: Sử lý ảnh
-            if (predict != null && predict.getViolationDetected() ) {
+
+            if (predictContent != null && predictContent.getViolationDetected() ) {
                 post.setViolationDetected(true);
             }
             else {
-                post.setViolationDetected(false);
+                List<Image> images = post.getImage();
+                for (Image image : images) {
+                    Predict predictImage = predictService.findByReferencesTypeAndReferenceIdAndViolationDetected(
+                            ReferencesType.IMAGE,
+                            image.getId(),
+                            true
+                    ).orElse(null);
+                    if (predictImage != null && predictImage.getViolationDetected()) {
+                        post.setViolationDetected(true);
+                    }
+                                        else {
+                        post.setViolationDetected(false);
+                    }
+                }
+
             }
         }
 
