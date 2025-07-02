@@ -77,9 +77,13 @@ public class PostController {
     public Response getByOwner(
             @PathVariable("ownerId") String ownerId,
             @RequestParam(defaultValue = "PERSON") OwnerType type,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(defaultValue = "createdAt") String orderBy,
+            @RequestParam(defaultValue = "DESC") Sort.Direction direction,
             @RequestParam(required = false) String userId
     ) {
-        List<Post> posts = postService.findByOwnerIdAndOwnerType(ownerId, type);
+        List<Post> posts = postService.findByOwnerIdAndOwnerType(ownerId, type, page, size, orderBy, direction);
 
 
         if (userId != null) {
