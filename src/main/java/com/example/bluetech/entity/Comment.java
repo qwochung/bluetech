@@ -31,7 +31,7 @@ public class Comment extends BaseEntity {
     @DBRef
     Image image;
 
-    @DBRef
+//    @DBRef
     String parentId;
 
     @Transient
