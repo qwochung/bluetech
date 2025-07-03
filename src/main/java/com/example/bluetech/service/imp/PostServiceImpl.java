@@ -138,7 +138,7 @@ public class PostServiceImpl implements PostService {
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
-        Page<Post> postPage = postRepository.findByOwnerIdAndOwnerType(ownerId, ownerType, (java.awt.print.Pageable) pageable);
+        Page<Post> postPage = postRepository.findByOwnerIdAndOwnerType(ownerId, ownerType, pageable);
 
         return postPage.getContent()
                 .stream()
