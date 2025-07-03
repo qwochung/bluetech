@@ -17,16 +17,13 @@ public class BluetechApplication {
 
 		//		JWT Configuration
 		System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
+		System.setProperty("JWT_EXPIRATION", dotenv.get("JWT_EXPIRATION"));
+		System.setProperty("JWT_RESET_EXPIRATION", dotenv.get("JWT_RESET_EXPIRATION"));
 
+		System.setProperty("EMAIL_SENDER", dotenv.get("EMAIL_SENDER"));
+		System.setProperty("EMAIL_SENDER_PASSWORD", dotenv.get("EMAIL_SENDER_PASSWORD"));
 
-		// Lấy lại từ ENV nếu chạy trên Docker
-		String accessKey = System.getenv("AWS_ACCESS_KEY_ID");
-		String secretKey = System.getenv("AWS_SECRET_ACCESS_KEY");
-		String jwt = System.getenv("JWT_SECRET");
-
-		if (accessKey != null) System.setProperty("AWS_ACCESS_KEY_ID", accessKey);
-		if (secretKey != null) System.setProperty("AWS_SECRET_ACCESS_KEY", secretKey);
-		if (jwt != null) System.setProperty("JWT_SECRET", jwt);
+		System.setProperty("OPENAI_KEY", dotenv.get("OPENAI_KEY"));
 
 
 		SpringApplication.run(BluetechApplication.class, args);

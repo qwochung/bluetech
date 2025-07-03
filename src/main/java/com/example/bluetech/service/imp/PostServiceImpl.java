@@ -21,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -128,12 +131,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType) {
+    public List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType, int page, int size, String orderBy, Sort.Direction direction) {
         if (ownerType == OwnerType.PERSON) {
-            User user = userService.findById(ownerId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            userService.findById(ownerId)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         }
-        List<Post> posts = postRepository.findByOwnerIdAndOwnerType(ownerId, ownerType);
-        return posts.stream()
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, orderBy));
+        Page<Post> postPage = postRepository.findByOwnerIdAndOwnerType(ownerId, ownerType, pageable);
+
+        return postPage.getContent()
+                .stream()
                 .map(this::enrichPostWithCounts)
                 .collect(Collectors.toList());
     }

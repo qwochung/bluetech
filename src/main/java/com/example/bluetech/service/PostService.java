@@ -17,7 +17,7 @@ public interface PostService {
 
     Optional<Post> findByIdAndUserId(String id, String userId);
 
-    List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType);
+    List<Post> findByOwnerIdAndOwnerType(String ownerId, OwnerType ownerType, int page, int size, String orderBy, Sort.Direction direction);
     List<Post> findByTag(String tag);
     Post update(String id,Post post);
     void delete(String id);
